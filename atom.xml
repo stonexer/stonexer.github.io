@@ -4,7 +4,7 @@
   <title><![CDATA[SToneX]]></title>
   <link href="http://www.sitixi.com/atom.xml" rel="self"/>
   <link href="http://www.sitixi.com/"/>
-  <updated>2016-12-26T09:21:00+08:00</updated>
+  <updated>2016-12-26T09:22:00+08:00</updated>
   <id>http://www.sitixi.com/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -12,6 +12,86 @@
   </author>
   <generator uri="http://www.coderforart.com/">CoderForArt</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Y Combinator]]></title>
+    <link href="http://www.sitixi.com/14827160464987.html"/>
+    <updated>2016-12-26T09:34:06+08:00</updated>
+    <id>http://www.sitixi.com/14827160464987.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">起因</h2>
+
+<p><code>Y Combinator</code>，在无类型lambda演算中最著名的（可能是最简单的）不动点组合子，听上去是个很高大上的名词，它可以让实现匿名函数的递归，举一个例子<em>（本篇例子皆为 js 代码）</em>：</p>
+
+<pre><code class="language-js">done( () =&gt; {
+    // ...blala
+})
+</code></pre>
+
+<p>我们想在回调的匿名函数中做一些事情，似乎很容易。但有一件事情很难完成，那就是 <strong>递归</strong>，因为递归需要函数的定义，而匿名函数作为 &quot;自由变量&quot; 没法直接调用。</p>
+
+<p>上面这个例子似乎没什么重大意义，不让用递归咱不用不就好了，或者就给这个函数个名字不也 ok 么？的确，现实中 javascript 我们不大会遇到这种情况，也可以绕道而行选择他法。但是在 lambda演算 的范式中，必须要有这样一个逻辑上的证明使之成立。所以，我们有了 <code>Y Combinator</code>，用处是使得 lambda 表达式不需要名字。</p>
+
+<h2 id="toc_1">学习</h2>
+
+<p>先实现一个简单的递归函数：</p>
+
+<pre><code class="language-js">const fact = x =&gt; x &gt; 0 ? fact(x-1) * x : 1
+// 1 -&gt; 1
+// 2 -&gt; 2
+// 3 -&gt; 6
+// ...
+</code></pre>
+
+<p>我们在函数里调用了 <code>fact</code>，我们想要字面上除去它，那把它也写成参数不就可以了么？</p>
+
+<pre><code class="language-js">const factHO = f =&gt; x =&gt; x &gt; 0 ? f(x-1) * x : 1
+</code></pre>
+
+<p>现在 （ == 指 等价于）</p>
+
+<pre><code class="language-js">fact == factHO(fact)
+</code></pre>
+
+<p>我们就是要找到函数 Y，使得 <code>Y(factHO) == fact</code> 便可完成要求。找到（ == 指 等价于）：</p>
+
+<pre><code class="language-js">const Y = f =&gt; f(Y(f))
+
+Y(factHO) == factHO( Y(factHO) )
+            == factHO( fact )
+            == fact
+</code></pre>
+
+<p>这样的一个 Y 便是通用的可以产生递归的高阶函数了，问题转化成了 <code>Y = f =&gt; f(Y(f)）</code> 的不含 Y 的等效函数。这样的过程如何推演完全想不明白，但是 Curry 大神给出了一个解：</p>
+
+<pre><code class="language-js">const Y = f =&gt; 
+  (x =&gt; f(y =&gt; x(x)(y)))(x =&gt; f(y =&gt; x(x)(y)))
+</code></pre>
+
+<p>证明过程看这里，用一个例子函数g来展开它，我们可以看到上面这个函数是怎么成为一个不动点组合子的：</p>
+
+<pre><code>(Y g)
+= (λf.(λx.(f (x x)) λx.(f (x x))) g)
+= (λx.(g (x x)) λx.(g (x x)))（λf的β-归约 - 应用主函数于g）
+= (λy.(g (y y)) λx.(g (x x)))（α-转换 - 重命名约束变量）
+= (g (λx.(g (x x)) λx.(g (x x))))（λy的β-归约 - 应用左侧函数于右侧函数）
+= (g (Y g))（Y的定义）
+</code></pre>
+
+<h2 id="toc_2">尝试一下</h2>
+
+<p>重写下最开始的递归函数：</p>
+
+<pre><code class="language-js">const Y = f =&gt; 
+  (x =&gt; f(y =&gt; x(x)(y)))(x =&gt; f(y =&gt; x(x)(y)))
+
+const fact = Y( f =&gt; x =&gt; x &gt; 0 ? f(x-1) * x : 1 )
+
+fact(3) // 6
+</code></pre>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Vuex 源码阅读]]></title>
