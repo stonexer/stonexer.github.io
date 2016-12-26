@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>  
+	  
+  	Vuex 源码阅读 - SToneX
+  	
+	</title>
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="atom.xml" rel="alternate" title="SToneX" type="application/atom+xml">
+
+	<link href="asset/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="asset/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<script src="asset/javascripts/jquery.min.js"></script>
+	<script src="asset/highlightjs/highlight.pack.js"></script>
+	<link href="asset/highlightjs/styles/solarized_dark.css" media="screen, projection" rel="stylesheet" type="text/css">
+<script>hljs.initHighlightingOnLoad();</script>
+
+	<!--[if lt IE 9]><script src="asset/javascripts/html5.js"></script><![endif]-->
+	<!-- <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'> -->
+	<style type="text/css">
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Nunito-Light'), url(asset/font/1TiHc9yag0wq3lDO9cw0voX0hVgzZQUfRDuZrPvH3D8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Nunito-Regular'), url(asset/font/6TbRXKWJjpj6V2v_WyRbMX-_kf6ByYO6CLYdB4HQE-Y.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+/* latin */
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Nunito-Bold'), url(asset/font/TttUCfJ272GBgSKaOaD7KoX0hVgzZQUfRDuZrPvH3D8.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+	</style>
+	
+	<style type="text/css">
+	.container .left-col{ opacity: 1;}
+	#pagenavi a{ font-size: 1.3em;}
+	#pagenavi .next:before{ top: 3px;}
+	#pagenavi .prev:before{ top: 3px;}
+	.container .mid-col .mid-col-container #content .archives .title{ font-size: 1.5em;}
+	.container .mid-col .mid-col-container #content article{ padding: 15px 0px;}
+	#header .subtitle {
+		line-height: 1.2em;
+		padding-top: 8px;
+	}
+	article pre{ background: none; border: none; padding: 0;}
+	article .entry-content{text-align: left;}
+	.share-comment{ padding: 25px 0px; clear: both;}
+	hr{ margin: 20px 0px;border: 0; border-top:solid 1px #ddd;}
+	</style>
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+				<header id="header" class="inner">
+				 
+					
+					<h1><a href="index.html">SToneX</a></h1>
+					<p class="subtitle"></p>
+					<nav id="main-nav">
+						<ul class="main">
+						
+						  <li id=""><a target="self" href="index.html">Home</a></li>
+						
+						  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+						
+						</ul>
+					</nav>
+
+					<nav id="sub-nav">
+						<div class="social">
+
+
+
+
+
+
+
+
+
+
+
+
+
+								
+
+								<a class="rss" href="atom.xml" title="RSS">RSS</a>
+							
+						</div>
+					</nav>
+				</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			<div class="mid-col-container"> <div id="content" class="inner">
+
+	<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+		<h1 class="title" itemprop="name">Vuex 源码阅读</h1>
+		<div class="entry-content" itemprop="articleBody">
+			<p>Vuex 作为 Vue 官方的状态管理架构，借鉴了 Flux 的设计思想，在大型应用中可以理清应用状态管理的逻辑。为了更清楚的理解它的原理和实现，还是从源码开始读起吧。总共 1000 多行的代码，读起来也相对轻松。</p>
+
+<pre><code class="language-shell">cloc src/
+
+------------------------------------------------------------------
+Language   files          blank        comment         code
+------------------------------------------------------------------
+JavaScript   5             53            141            389
+------------------------------------------------------------------
+SUM:         5             53            141            389
+------------------------------------------------------------------
+
+cloc test/
+
+------------------------------------------------------------------
+Language   files          blank        comment         code
+------------------------------------------------------------------
+JavaScript   5             62             30            793
+------------------------------------------------------------------
+SUM:         5             62             30            793
+------------------------------------------------------------------
+</code></pre>
+
+<h2 id="toc_0">结构梳理</h2>
+
+<p>先抛开 middlewares，Vuex 的主要源码一共有三个文件:</p>
+
+<table>
+<thead>
+<tr>
+<th>file</th>
+<th>intro</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>Class Store， install，...</td>
+</tr>
+<tr>
+<td>override.js</td>
+<td>初始化 Vuex</td>
+</tr>
+<tr>
+<td>util.js</td>
+<td>相关 util（用到了 getWatcher 和 getDeep）</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="toc_1">Store</h2>
+
+<p>我们使用 <code>Store</code> 创建 Vuex 的实例并传递给 Vue 的根组件。主要包含了 <code>state</code> 和 <code>mutation</code>。<code>Store</code> 创建了一个 <code>data</code> 为 <code>state</code> 的 Vue 实例，使用了 ES6 Class 的 <code>get</code> 和 <code>set</code> 对 state 做了映射，对 state 的重新 set 当然是不允许的，get 则映射到了 <code>this._vm._data</code>。</p>
+
+<p><code>Store</code> 提供了 <code>dispatch</code> 方法来完成对 state 的修改，和想象中的差不多，在 _mutations 里找到对应 <code>type</code> 的 mutation，参数并入 <code>this.state</code> 传参调用。</p>
+
+<h2 id="toc_2">override</h2>
+
+<p>作为一个 Vue 的插件，Vuex 需要被这样引入:</p>
+
+<pre><code class="language-js">import Vue from &#39;vue&#39;
+import Vuex from &#39;vuex&#39;
+
+Vue.use(Vuex)
+</code></pre>
+
+<p>Vue 的插件应当有一个公开方法 <code>install</code>。这个方法的第一个参数是 Vue 构造器。 Vuex 的 <code>install</code> 中，在保证单次调用的情况下，调用 <code>override</code> 对 Vue 构造器进入了注入。</p>
+
+<p><code>override</code> 中对 <code>Vue.prototype._init</code> 注入了 <code>vuexInit</code>，<code>vuexInit</code> 会在每个 instance 的 init hook 中调用。</p>
+
+<p>第一步是绑定 <code>store</code>, Vuex 会寻找 options 中的 <code>store</code> 作为实例的 <code>$store</code>，在不存在时则以递归的方式寻找父组件中的 <code>$store</code>，因此在 Vuex 的项目中，<code>store</code> 只需要在根组件中注入即可。</p>
+
+<p>第二步是处理 <code>vuex</code>, 分别处理其中的 <code>getters</code> 和 <code>actions</code>, 以 <code>example/counter/Counter.vue</code> 为例：</p>
+
+<h3 id="toc_3">getters</h3>
+
+<p>Vuex 用 <code>Object.defineProperty</code> 为每个 getter 在 vm 上绑定了 data，特别的是 getter 作为单向仅 get 数据流，并不能被 set，所以对应的 <code>setter</code> 为报错用的空函数。而 <code>getter</code> 的原理类似于 <code>computed getter</code>，特别的是使用了 <code>store</code> 的 uniqueId 为标识做了缓存，这样同一个 getter 在所有组件中都会使用相同的 watcher。</p>
+
+<h3 id="toc_4">setter</h3>
+
+<p>Action 相对要简单一些，以 <code>$store</code> 作为 action 第一个参数，并将 action 绑定在 instance 上。形成了一个闭环，让 action 访问到 store。</p>
+
+<h2 id="toc_5">总结</h2>
+
+<p>Vuex 源码上粗略的分析基本就到这里了，其实很多地方的代码都很值得细细研究，比如 Store 中的 middlewares 可以完成一些神奇的事情，这里就不一一分析了，画了一张图，按源码的思路大概表达下数据流的意思。O(∩_∩)O</p>
+
+<pre><code>      +-----------+
+      |           |
+      |   Store   +&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;+
+      |           |                                   v
+      |-----------|                                   v
+      |   state   &lt;&lt;&lt;&lt;&lt;&lt;+                             v
+      |-----------|     ^                             v
++&gt;&gt;&gt;&gt;&gt;- distapatch -&gt;&gt;&gt;&gt;+                             v
+^     +-----------+                                   v
+^                                                     v
+^                          +--------------------+     v
+^                          |                    |     v
+^                          |     Component      |     v
+^                          |                    |     v
+^                          |--------------------|     v
+^                    +&lt;&lt;&lt;&lt;&lt;-----  $store  &lt;------&lt;&lt;&lt;&lt;&lt;+
+^                    v     |--------------------|
+^                    v     |  vuex: {           |
+^                    v     |                    |
+^                    +&gt;&gt;&gt;&gt;&gt;----- getters: {},   |
+^                          |                    |
++&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;----- actions: {}    |
+                           |                    |
+                           |  }                 |
+                           +--------------------+
+</code></pre>
+
+		</div>
+	</article>
+	<div class="share-comment">
+	 
+
+	  
+
+	  
+
+	</div>
+</div>        </div>
+			<footer id="footer" class="inner">Copyright &copy; 2014
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; 
+Theme by <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a>
+      </footer>
+		</div>
+	</div>
+
+  
+    
+
+
+
+</body>
+</html>
