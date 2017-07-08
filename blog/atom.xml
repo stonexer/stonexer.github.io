@@ -4,7 +4,7 @@
   <title><![CDATA[SToneX]]></title>
   <link href="http://www.sitixi.com/atom.xml" rel="self"/>
   <link href="http://www.sitixi.com/"/>
-  <updated>2017-07-08T22:36:08+08:00</updated>
+  <updated>2017-07-08T23:51:02+08:00</updated>
   <id>http://www.sitixi.com/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -113,11 +113,11 @@ var bar = exports.bar = function bar(a, b) {
 /***/ })
 </code></pre>
 
-<p>transform 的引用是 module 级别的，这意味着在多个 module 使用时会带来重复的引用。同时，你可能并不想一个个的引入自己需要的方法。</p>
+<p>transform 的引用是 module 级别的，这意味着在多个 module 使用时会带来重复的引用，这在多文件的项目里可能带来灾难。另外，你可能也并不想一个个的去添加自己要用的 plugin，如果能自动引入该多好。</p>
 
 <h2 id="toc_2">babel-runtime &amp; babel-plugin-transform-runtime</h2>
 
-<p>前面提到问题主要在于方法的引入方式是内联的，直接插入了一行代码从而无法优化。鉴于这样的考虑，babel 提供了 babel-plugin-transform-runtime，从一个统一的地方 <a href="https://github.com/zloirock/core-js">core-js</a> 引入对应的方法。</p>
+<p>前面提到问题主要在于方法的引入方式是内联的，直接插入了一行代码从而无法优化。鉴于这样的考虑，babel 提供了 babel-plugin-transform-runtime，从一个统一的地方 <a href="https://github.com/zloirock/core-js">core-js</a> <strong>自动</strong>引入对应的方法。</p>
 
 <p>安装和使用的方法同样不复杂：</p>
 
