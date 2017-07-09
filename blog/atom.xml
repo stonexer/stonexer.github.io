@@ -4,7 +4,7 @@
   <title><![CDATA[SToneX]]></title>
   <link href="http://www.sitixi.com/atom.xml" rel="self"/>
   <link href="http://www.sitixi.com/"/>
-  <updated>2017-07-08T23:51:02+08:00</updated>
+  <updated>2017-07-09T09:44:03+08:00</updated>
   <id>http://www.sitixi.com/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -13,11 +13,13 @@
   <generator uri="http://www.mweb.im/">MWeb</generator>
   
   <entry>
-    <title type="html"><![CDATA[前端 Polyfill 方案]]></title>
+    <title type="html"><![CDATA[21 分钟精通前端 Polyfill 方案]]></title>
     <link href="http://www.sitixi.com/14994835126345.html"/>
     <updated>2017-07-08T11:11:52+08:00</updated>
     <id>http://www.sitixi.com/14994835126345.html</id>
     <content type="html"><![CDATA[
+<p><img src="media/14994835126345/dataTable.png" alt="dataTable"/></p>
+
 <p>今天是 2017 年 7 月 7 日，es2015 正式发布已经两年了。但最新的浏览器们逼近 100% 的支持率对我们好像并没有什么卵用，为了少数用户的体验，我们很可能需要兼容 IE9。感谢 babel 的编译，让我们完美的提前使用上了 const，let 和 arrow function。可也许你还是面对着不敢直接使用 <code>fetch</code> 或是 <code>Object.assign</code> 的难题？</p>
 
 <h2 id="toc_0">babel 和 polyfill</h2>
