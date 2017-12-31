@@ -137,7 +137,7 @@ var foo = function foo(a, b) {
 };
 </code></pre>
 
-<p>arrow function 被编译成了普通的函数，但仔细一看 <code>Object.assign</code> 还牢牢的站在那里，而它作为 es2015 的新方法，并不能运行在相当多的浏览器上。为什么不把 Object.assign 编译成 <code>(Object.assign||function() { /*...*/})</code> 这样的替代方法呢？好问题！编译为了保证正确的语义，只能转换语法而不是去增加或修改原有的属性和方法。所以 babel 不处理 Object.assign 反倒是最正确的做法。而处理这些方法的方案则被称为 polyfill。</p>
+<p>arrow function 被编译成了普通的函数，但仔细一看 <code>Object.assign</code> 还牢牢的站在那里，而它作为 es2015 的新方法，并不能运行在相当多的浏览器上。为什么不把 <code>Object.assign</code> 编译成 <code>(Object.assign||function() { /*...*/})</code> 这样的替代方法呢？好问题！编译为了保证正确的语义，只能转换语法而不是去增加或修改原有的属性和方法。所以 babel 不处理 <code>Object.assign</code> 反倒是最正确的做法。而处理这些方法的方案则被称为 polyfill。</p>
 
 <h2 id="toc_1">babel-plugin-transform-xxx</h2>
 
@@ -327,6 +327,9 @@ transform-plugins.js  3.48 kB       4  [emitted]
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
+          <a href="15147086950192.html" 
+          title="Previous Post: 从 React 到 Reason">&laquo; 从 React 到 Reason</a>
+      
         </p>
         </div>
         <div class="large-6 columns">
@@ -400,6 +403,12 @@ transform-plugins.js  3.48 kB       4  [emitted]
                 <div class="side-content">
                 <ul class="posts-list">
 	      
+		      
+			      <li class="post">
+			        <a href="15147086950192.html">从 React 到 Reason</a>
+			      </li>
+		     
+		  
 		      
 			      <li class="post">
 			        <a href="14994835126345.html">21 分钟精通前端 Polyfill 方案</a>
