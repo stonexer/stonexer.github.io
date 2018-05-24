@@ -164,13 +164,15 @@
                 dx = event.pageX - cx;
                 dy = event.pageY - cy;
 
-                tiltx = (dy / cy);
-                tilty = - (dx / cx);
+                tiltx = -(dy / cy);
+                tilty = (dx / cx);
 
                 transformCard(tiltx, tilty);
             });
 
             $(cont).on('touchmove', function (event) {
+                event.preventDefault();
+
                 cx = Math.ceil($(window).width() / 2.0);
                 cy = Math.ceil($(window).height() / 2.0);
 
@@ -179,8 +181,8 @@
                 dx = event.pageX - cx;
                 dy = event.pageY - cy;
 
-                tiltx = (dy / cy);
-                tilty = - (dx / cx);
+                tiltx = -(dy / cy);
+                tilty = (dx / cx);
 
                 transformCard(tiltx, tilty);
             });
