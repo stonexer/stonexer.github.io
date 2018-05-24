@@ -158,7 +158,7 @@
                 $(el, cont).css('transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
             }
 
-            $(cont).mousemove(function (event) {
+            $(cont).on('mousemove', function (event) {
                 cx = Math.ceil($(window).width() / 2.0);
                 cy = Math.ceil($(window).height() / 2.0);
                 dx = event.pageX - cx;
@@ -170,9 +170,17 @@
                 transformCard(tiltx, tilty);
             });
 
-            window.addEventListener('deviceorientation', function (e) {
-                tiltx = e.beta / 180;
-                tilty = e.alpha / 180;
+            $(cont).on('touchmove', function (event) {
+                cx = Math.ceil($(window).width() / 2.0);
+                cy = Math.ceil($(window).height() / 2.0);
+
+                event = event.targetTouches[0];
+
+                dx = event.pageX - cx;
+                dy = event.pageY - cy;
+
+                tiltx = (dy / cy);
+                tilty = - (dx / cx);
 
                 transformCard(tiltx, tilty);
             });
