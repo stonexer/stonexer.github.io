@@ -5,11 +5,12 @@
     <title>SToneX</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-    <script src="https://js.fundebug.cn/fundebug.1.0.1.min.js" apikey="ca7cc1fe1670fe53f5b9d4f069cfad2942e928aa7ea2d68573b7a742ae4a26f6"></script>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700' rel='stylesheet' type='text/css'>
     <style>
         html,
         body {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
             margin: 0;
         }
@@ -21,20 +22,32 @@
 
         .name-card {
             position: absolute;
-            left: 0;
-            width: 320px;
-            text-align: center;
             top: 50%;
             left: 50%;
-            margin-left: -160px;
-            margin-top: -160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 320px;
+            height: 320px;
+            padding: 20px;
+            text-align: center;
+            margin-left: -180px;
+            margin-top: -180px;
             -webkit-user-select: none;
             -moz-user-select: none;
             user-select: none;
+            -webkit-perspective: 1000;
+            -moz-perspective: 1000;
+            perspective: 1000;
+            transform-style: preserve-3d;
         }
 
         #logo {
-            position: relative;
+            position: absolute;
+            top: 20px;
+            -webkit-transform: translateZ(40px);
+            -moz-transform: translateZ(40px);
+            transform: translateZ(40px);
             width: 80px;
             height: 80px;
             margin: 0 auto 20px;
@@ -77,24 +90,34 @@
         }
 
         h1 {
+            position: absolute;
+            top: 100px;
+            -webkit-transform: translateZ(10px);
+            -moz-transform: translateZ(10px);
+            transform: translateZ(10px);
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-weight: 500;
             font-size: 30px;
             letter-spacing: 2px;
             margin: 12px 0;
-            left: 4px;
         }
 
         h2 {
+            position: absolute;
+            top: 150px;
+            -webkit-transform: translateZ(20px);
+            -moz-transform: translateZ(20px);
+            transform: translateZ(20px);
             color: #999;
             font-weight: normal;
             font-size: 15px;
             letter-spacing: 2px;
             margin-bottom: 30px;
-            left: 3px;
         }
 
         .pages {
+            position: absolute;
+            top: 200px;
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -123,17 +146,44 @@
             <a href="https://github.com/stonexer">Github</a>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script>
+        function cssParallax(cont, el, radiusVal) {
+            $(cont).mousemove(function (event) {
+
+                cx = Math.ceil($(window).width() / 2.0);
+                cy = Math.ceil($(window).height() / 2.0);
+                dx = event.pageX - cx;
+                dy = event.pageY - cy;
+
+                tiltx = (dy / cy);
+                tilty = - (dx / cx);
+                radius = Math.sqrt(Math.pow(tiltx, 2) + Math.pow(tilty, 2));
+                degree = (radius * radiusVal);
+
+                $(el, cont).css('-webkit-transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+                $(el, cont).css('transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+            });
+        }
+
+        $(document).ready(function () {
+            cssParallax('body', '.name-card', 20);
+        });
+    </script>
     <!-- Hotjar Tracking Code for www.sitixi.com -->
     <script>
-        (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:674262,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        (function (h, o, t, j, a, r) {
+            h.hj = h.hj || function () { (h.hj.q = h.hj.q || []).push(arguments) };
+            h._hjSettings = { hjid: 674262, hjsv: 6 };
+            a = o.getElementsByTagName('head')[0];
+            r = o.createElement('script'); r.async = 1;
+            r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
             a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+        })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
     </script>
+    <!-- Fundebug -->
+    <script src="https://js.fundebug.cn/fundebug.1.0.1.min.js" apikey="ca7cc1fe1670fe53f5b9d4f069cfad2942e928aa7ea2d68573b7a742ae4a26f6"></script>
 </body>
 
 </html>
