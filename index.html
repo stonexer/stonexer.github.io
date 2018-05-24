@@ -150,8 +150,15 @@
         crossorigin="anonymous"></script>
     <script>
         function cssParallax(cont, el, radiusVal) {
-            $(cont).mousemove(function (event) {
+            function transformCard(tiltx, tilty) {
+                radius = Math.sqrt(Math.pow(tiltx, 2) + Math.pow(tilty, 2));
+                degree = (radius * radiusVal);
 
+                $(el, cont).css('-webkit-transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+                $(el, cont).css('transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+            }
+
+            $(cont).mousemove(function (event) {
                 cx = Math.ceil($(window).width() / 2.0);
                 cy = Math.ceil($(window).height() / 2.0);
                 dx = event.pageX - cx;
@@ -159,16 +166,20 @@
 
                 tiltx = (dy / cy);
                 tilty = - (dx / cx);
-                radius = Math.sqrt(Math.pow(tiltx, 2) + Math.pow(tilty, 2));
-                degree = (radius * radiusVal);
 
-                $(el, cont).css('-webkit-transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
-                $(el, cont).css('transform', 'rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+                transformCard(tiltx, tilty);
+            });
+
+            window.addEventListener('deviceorientation', function (e) {
+                tiltx = e.beta / 180;
+                tilty = e.alpha / 180;
+
+                transformCard(tiltx, tilty);
             });
         }
 
         $(document).ready(function () {
-            cssParallax('body', '.name-card', 20);
+            cssParallax('body', '.name-card', 40);
         });
     </script>
     <!-- Hotjar Tracking Code for www.sitixi.com -->
