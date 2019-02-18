@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[SToneX]]></title>
+  <link href="http://www.sitixi.com/atom.xml" rel="self"/>
+  <link href="http://www.sitixi.com/"/>
+  <updated>2017-12-31T17:37:01+08:00</updated>
+  <id>http://www.sitixi.com/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[从 React 到 Reason]]></title>
+    <link href="http://www.sitixi.com/15147086950192.html"/>
+    <updated>2017-12-31T16:24:55+08:00</updated>
+    <id>http://www.sitixi.com/15147086950192.html</id>
+    <content type="html"><![CDATA[
+<p><img src="http://7xr8pm.com1.z0.glb.clouddn.com/ReasonReact.png" alt="ReasonReact"/></p>
+
+<blockquote>
+<p>如果你是一个 React 爱好者，开始在各种站点听到有人谈论 Reason 这个新语言，也看见 <a href="https://github.com/jordwalke">Jordan</a>（React 作者）说 ReasonReact 将是未来，但你却是不知道从哪下手，那么这篇小教程就是为你准备的。</p>
+</blockquote>
+
+<p>ps. 有条件的话还是尽量看 <a href="https://reasonml.github.io/guide/what-and-why">Reason</a> 和 <a href="https://reasonml.github.io/reason-react/docs/en/what-why.html">ReasonReact</a> 的官方文档吧</p>
+
+<p>pps. Jared 写的 <a href="https://jaredforsyth.com/2017/07/05/a-reason-react-tutorial/">A ReasonReact Tutorial</a> 是 ReasonReact 最棒的入门指南。本文也是经由他允许，参考了很多其中的内容。能看的懂英语的都直接去他那里吧~</p>
+
+<h2 id="toc_0">Reason 是什么？</h2>
+
+<p>Reason 是一门基于 <a href="http://ocaml.org/">OCaml</a> 的语言，它为 Ocaml 带来了新的语法和工具链。它既可以通过 BuckleScript 被同编译为 JavaScript，也支持直接编译为原生的二进制汇编。Reason 提供了和 JavaScript 相似的语法，也可以使用 npm 来安装依赖。长江后浪推前浪，Reason 丢掉了历史包袱，比 JavaScript 多了可靠的<strong>静态类型</strong>，也更快更简洁！</p>
+
+<h2 id="toc_1">为什么要学 Reason ？</h2>
+
+<blockquote>
+<p>“为啥我要花时间学一门全新的语言呢？是 JavaScript 哪里不好还是你们要求太高？”</p>
+</blockquote>
+
+<p>错！Reason 不是一门全新的语言，事实上 80% 的语义都可以直接对应到现代的 JavaScript 上，反之也差不多。你只需要丢弃掉一丢丢的 JavaScript 边角语法，再学一点点好东西，就可以获得也许 ES2030 才有的特性。对于大部分人来说，学习 Reason 也不会比学习 JavaScript 和一个其他的类型系统（比如 Flow）来的慢。</p>
+
+<p>不相信的话，先自己去看看 <a href="https://reasonml.github.io/guide/javascript/syntax-cheatsheet/">JS -&gt; Reason 速查表</a>，然后去 <a href="https://reasonml.github.io/try/">playground</a> 体验一下吧。</p>
+
+<h2 id="toc_2">从哪开始？</h2>
+
+<p>如果你体验了一下，还是提不起兴趣，你可以再出门右转逛逛隔壁家 <a href="http://elm-lang.org/">elm</a> 和 <a href="https://clojurescript.org/">ClojureScript</a> 试试。但如果你觉得 ok，却不知道从哪下手，那不妨和我一样，从咱们熟悉的 React 开始。<a href="https://github.com/jordwalke">Jordan</a> 重新发起了 <a href="https://reasonml.github.io/reason-react/">ReasonReact</a> 这个新项目，让我们可以换一种更简单优雅的方式写 React。</p>
+
+<h2 id="toc_3">ReasonReact</h2>
+
+<p>ReasonReact 提供了一些和 React 脚手架类似的工具，比如 <a href="https://github.com/reasonml-community/reason-scripts">reason-scripts</a>。不过为了理解的深入一点，不妨从零开始搭起我们的第一个 ReasonReact 项目。新建一个项目目录，名字随意，让我们开始吧~ 当然，你也可以直接 clone 已经准备好了的 <a href="https://github.com/stonexer/simple-reason-react-demo">simple-reason-react-demo</a> 项目来参考。</p>
+
+<p>首先，初始化 <code>package.json</code></p>
+
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;simple-reason-react-demo&quot;,
+  &quot;version&quot;: &quot;0.1.0&quot;,
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;bsb -make-world -w&quot;,
+    &quot;build&quot;: &quot;webpack -w&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;react&quot;: &quot;^16.2.0&quot;,
+    &quot;react-dom&quot;: &quot;^16.2.0&quot;,
+    &quot;reason-react&quot;: &quot;^0.3.0&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;bs-platform&quot;: &quot;^2.1.0&quot;,
+    &quot;webpack&quot;: &quot;^3.10.0&quot;
+  }
+}
+</code></pre>
+
+<p>然后安装一下依赖：</p>
+
+<pre><code class="language-shell">npm install --registry=https://registry.npm.taobao.org
+</code></pre>
+
+<p>项目里安装了最新的 React 和 ReactDOM，以及额外的 ReasonReact。而编译工具使用了前端业界标准 Webpack 和 <a href="https://www.zhihu.com/people/hongbo_zhang">张宏波</a> 开发的 <a href="https://github.com/bucklescript/bucklescript">bs-platform</a>。你可能暂时还弄不清 BuckleScript 在这里将要扮演怎样的角色，不过没关系，暂时你只要把他理解成 Reason -&gt; JavaScript 的编译器就好了，就像 Babel 把 ES2016 编译成了 ES5 一样。</p>
+
+<p>然后，我们添加一个 BuckleScript 的配置文件 <code>bsconfig.json</code></p>
+
+<pre><code class="language-json">{
+  &quot;name&quot; : &quot;simple-reason-react-demo&quot;,
+  &quot;reason&quot; : {&quot;react-jsx&quot; : 2},
+  &quot;refmt&quot;: 3,
+  &quot;bs-dependencies&quot;: [&quot;reason-react&quot;],
+  &quot;sources&quot;: &quot;src&quot;
+}
+</code></pre>
+
+<p>可以大概猜出来，项目用到了 reason 的 <code>react-jsx</code> 语法，依赖了 <code>reason-react</code>，源代码存放在 <code>src</code> 目录。时间有限，就先不展开研究了，详细配置可以查看 <a href="https://bucklescript.github.io/docs/zh-CN/build-configuration.html">bsconfig.json 结构</a>。再创建下 src 目录，我们的项目应该长成这样了</p>
+
+<pre><code class="language-shell">.
+├── bsconfig.json
+├── src
+├── node_modules
+└── package.json
+</code></pre>
+
+<h1 id="toc_4">你好，ReasonReact</h1>
+
+<p>是不是很容易的就到这里了，让我们正式开始写 Reason 吧！在 src 里新建 <code>Main.re</code> 文件，写下 Hello World</p>
+
+<pre><code class="language-reason">ReactDOMRe.renderToElementWithId(
+  &lt;div&gt;(ReasonReact.stringToElement(&quot;Hello ReasonReact&quot;))&lt;/div&gt;,
+  &quot;root&quot;
+);
+</code></pre>
+
+<p>几乎和 React 代码一样不是么？然后我们运行编译命令</p>
+
+<pre><code class="language-shell"># 相当于之前写好的 &#39;bsb -make-world -w&#39;
+npm start
+</code></pre>
+
+<p>一切正常的话，可以看到编译成功的提示，否则就要辛苦你按错误提示排查一下了，注意 bsb 的输出对我们的很重要，一些错误提示和类型检查的信息都要通过它来看。因为我们开启了 <code>-w</code> 的 watch 模式，接下来还要用到，就先不用退出了。bsb 将代码编译到了 lib 目录下</p>
+
+<pre><code class="language-shell">lib
+├── bs
+└── js
+    └── src
+        └── Main.js
+</code></pre>
+
+<p>目前我们要关注一下的是 <code>lib/js/src/Main.js</code>，打开它我们可以看到编译好的 JavaScript 代码，非常漂亮是吧？这都是 BuckleScript 的功劳。为了让代码能在浏览器里运行，我们还需要用 Webpack 打包一下模块化，这些你都应该非常熟悉了。</p>
+
+<p>创建 <code>public/index.html</code></p>
+
+<pre><code class="language-html">&lt;!doctype html&gt;
+&lt;meta charset=utf8&gt;
+&lt;title&gt;你好&lt;/title&gt;
+&lt;body&gt;
+&lt;div id=&quot;root&quot;&gt;&lt;/div&gt;
+&lt;script src=&quot;./bundle.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+
+<p>以及 <code>webpack.config.js</code></p>
+
+<pre><code class="language-javascript">const path = require(&#39;path&#39;);
+
+module.exports = {
+  entry: &#39;./lib/js/src/Main.js&#39;,
+  output: {
+    path: path.join(__dirname, &quot;public&quot;),
+    filename: &#39;bundle.js&#39;,
+  },
+};
+</code></pre>
+
+<p>Webpacck 配置里入口是 bsb 编译生成的 &#39;./lib/js/src/Main.js&#39;。再打开一个终端运行 <code>npm run build</code>，我们的准备工作就全部就绪了。我们只利用 webpack 做很简单的打包，所以你基本可以忽略这个终端的输出，还是把精力放在刚刚的 start 命令上。接下来直接在浏览器里打开 index.html 文件，就可以看到 “Hello ReasonReact” 了~</p>
+
+<h2 id="toc_5">第一个组件</h2>
+
+<p><img src="http://7xr8pm.com1.z0.glb.clouddn.com/Stepper.jpg" alt=""/></p>
+
+<p>让我们开始第一个组件的开发，一个只能加加减减的步进器。新建一个组件文件：<code>src/Stepper.re</code></p>
+
+<pre><code class="language-reason">let component = ReasonReact.statelessComponent(&quot;Stepper&quot;);
+
+let make = (children) =&gt; ({
+  ...component,
+  render: (self) =&gt;
+    &lt;div&gt;
+      &lt;div&gt;(ReasonReact.stringToElement(&quot;I&#39;m a Stepper! &quot;))&lt;/div&gt;
+    &lt;/div&gt;
+});
+</code></pre>
+
+<p><code>ReasonReact.statelessComponent</code> 会返回一个默认的组件定义，里面包含了你熟悉的那些生命周期函数以及其他一些方法和属性。这里我们定义了 <code>make</code> 方法，目前它只接受一个 <code>children</code> 参数，返回了一个组件。我们利用了类似 es6 的 <code>... 对象展开操作符</code> 重写了 <code>component</code> 中的 <code>render</code> 方法。神奇的是这段代码居然完全符合 JavaScript 的语法...接下来，让我们再修改一下 <code>Main.re</code>，让他渲染这个 Stepper 组件</p>
+
+<pre><code class="language-reason">ReactDOMRe.renderToElementWithId(&lt;Stepper /&gt;, &quot;root&quot;);
+</code></pre>
+
+<p>刷新下浏览器，你应该可以看到刚写好的组件就这么成功的 render 出来了。</p>
+
+<p>你可能很好奇为什么这里没有写 <code>require()</code> 或 <code>import</code>。这是因为 Reason 的跨文件依赖是自动从你的代码中推导出来的，当编译器看到 <code>Stepper</code> 这个在 <code>Main.re</code> 中并没有定义的量，它就会自动去找 <code>Stepper.re</code> 这个文件并引入该模块。</p>
+
+<p>熟悉 ReactJS 的同学都应该知道，jsx 并不是什么特殊的语法，只是会被编译成普通的函数调用，比如</p>
+
+<pre><code class="language-jsx">&lt;div&gt;Hello React&lt;/div&gt;
+// to
+React.createElement(
+  &quot;div&quot;,
+  null,
+  &quot;Hello React&quot;
+);
+</code></pre>
+
+<p>而在 ReasonReact 中，jsx 会被翻译成</p>
+
+<pre><code class="language-reason">&lt;Stepper /&gt;
+/* to */
+Stepper.make([||]) /* [|1,2,3|] 是 Reason 中数组的语法 */
+</code></pre>
+
+<p>意思是调用 Stepper 模块的 make 函数，参数是一个空的数组。这就和我们之前写好的 <code>Stepper.re</code> 中的 make 函数对应上了，这个空数组就对应于 make 的参数 children。再让我们看眼我们的第一个组件</p>
+
+<pre><code class="language-reason">let component = ReasonReact.statelessComponent(&quot;Stepper&quot;);
+
+let make = (children) =&gt; ({
+  ...component,
+  render: (self) =&gt;
+    &lt;div&gt;
+      &lt;div&gt;(ReasonReact.stringToElement(&quot;I&#39;m a Stepper! &quot;))&lt;/div&gt;
+    &lt;/div&gt;
+});
+</code></pre>
+
+<p>不同于 ReactJS 中组件的 <code>render</code>，这里的 <code>render</code> 方法需要一个参数：self，暂且你可以把它比作 this，因为我们的 <code>Stepper</code> 是一个 stateless 组件，所以我们还用不到它。<code>render</code> 方法里返回的同样是虚拟 DOM 节点，不同的是节点必须符合 ReasonReact 要求的节点类型。我们不能再直接写 <code>&lt;div&gt;Hello&lt;/div&gt;</code>，而得使用 ReasonReact 提供的 <code>stringToElement</code> 包装一层。嫌函数名太长？先忍着吧...</p>
+
+<h3 id="toc_6">加上 state</h3>
+
+<p>思来想去，我们的步进器还需要一个状态，就是要显示的数字。在 Reason 中，我们需要先定义 <code>state</code> 的类型（<code>type</code>）</p>
+
+<pre><code class="language-reason">type state = {
+  value: int
+};
+</code></pre>
+
+<p>如果你写过 flow 或者 typescript，一定不会觉得奇怪，这标识我们的 state 中包含 <code>int</code> 类型的 <code>value</code> 字段。然后，我们需要开始把原先的 <code>statelessComponent</code> 替换成 <code>reducerComponent</code>，原先的组件代码也需要略微改动一下</p>
+
+<pre><code class="language-reason">type state = {
+  value: int
+};
+
+let component = ReasonReact.reducerComponent(&quot;Stepper&quot;);
+
+let make = (children) =&gt; ({
+  ...component,
+  initialState: () =&gt; {
+    value: 0
+  },
+  reducer: ((), state) =&gt; ReasonReact.NoUpdate,
+  render: (self) =&gt;
+    &lt;div&gt;
+      &lt;div&gt;(ReasonReact.stringToElement(string_of_int(self.state.value)))&lt;/div&gt;
+    &lt;/div&gt;
+});
+</code></pre>
+
+<p>聪明的你肯定一下就看懂了 <code>initialState</code> 和 ReactJS 的 <code>getInitialState</code> 简直一模一样。而在 <code>render</code> 这里也很类似，组件当前的状态可以通过 <code>self.state</code> 获取，还是为了类型匹配我们套了一层 <code>string_of_int</code> 将 <code>int</code> 类型的 <code>value</code> 转换成 <code>string</code>。而新增的 <code>reducer</code> 函数可能就有点看不懂了。有意思的地方来啦~</p>
+
+<p>在 ReactJS 中，我们依靠 <code>setState</code> 去手动的更新 <code>state</code>。ReasonReact 里则引入了 “<code>reducer</code>” 的概念，看上去很像 Redux 对吧？也许是 Jordan 自己也不是很喜欢 <code>setState</code> 这个非函数式的操作吧 …… ReasonReact 里更新一个组件状态分为两个步骤，首先发起一个 <code>action</code>，然后在 <code>reducer</code> 中处理它并更新状态。此时此刻，我们还没有添加 <code>action</code>，所以 <code>reducer</code> 还是无操作的，我们直接返回了一个 <code>ReasonReact.NoUpdate</code> 来标识我们并没有触发更新。让我们继续加上 <code>action</code></p>
+
+<pre><code class="language-reason">type state = {
+  value: int
+};
+
+/* here */
+type action =
+  | Increase
+  | Decrease;
+
+let component = ReasonReact.reducerComponent(&quot;Stepper&quot;);
+
+let make = (children) =&gt; ({
+  ...component,
+  initialState: () =&gt; {
+    value: 0
+  },
+  reducer: (action, state) =&gt; {
+    /* here */
+    switch action {
+    | Decrease =&gt; ReasonReact.Update({value: state.value - 1})
+    | Increase =&gt; ReasonReact.Update({value: state.value + 1})
+    };
+  },
+  render: (self) =&gt;
+    &lt;div&gt;
+      /* and here */
+      &lt;button onClick={self.reduce((evt) =&gt; Decrease)}&gt;(ReasonReact.stringToElement(&quot;-&quot;))&lt;/button&gt;
+      &lt;div&gt;(ReasonReact.stringToElement(string_of_int(self.state.value)))&lt;/div&gt;
+      &lt;button onClick={self.reduce((evt) =&gt; Increase)}&gt;(ReasonReact.stringToElement(&quot;+&quot;))&lt;/button&gt;
+    &lt;/div&gt;
+});
+</code></pre>
+
+<p>首先，我们定义了 <code>action</code> 类型，它是一个 Variant（变体）。在 JavaScript 的世界里我们没见过这种值，它用来表示这个变体（或者先叫它 &quot;枚举&quot;？）可能的值。就像在 Redux 中推荐先声明一堆 <code>actionType</code> 一样，这个例子里我们定义了 +（<code>Increase</code>） 和 -（<code>Decrease</code>） 两种 <code>action</code>。</p>
+
+<p>然后我们就可以给 <code>button</code> 增加点击的回调函数。我们使用了 <code>self.reduce</code> 这个函数（还记得 <code>dispatch</code> 么），它接收一个函数 <code>(evt) =&gt; Increase</code> 做转换，可以把它看作将点击的 event（在这里我们忽略掉了它因为用不到它...）换成一个 <code>action</code>，而这个 <code>action</code> 会被 <code>self.reduce</code> 用于做一个副作用操作来更新 <code>state</code>，更新 <code>state</code> 的操作就在 <code>reducer</code> 中。</p>
+
+<p><code>reducer</code> 内采用了<strong>模式匹配</strong>的形式，定义了对于所有可能的 <code>action</code> 需要如何更新 <code>state</code>。例如，对于 <code>Increase</code> 这个类型的 <code>action</code>，返回了 <code>ReasonReact.Update({value: self.state.value + 1})</code> 去触发更新。值得注意的是，组件的 <code>state</code> 是不可变的，而目前 <code>state</code> 中只有 <code>value</code> 一个字段，所以我们没有 <code>{...state, value: state.value + 1}</code> 这样去展开它。</p>
+
+<p>如果你熟悉 Redux 的话，应该非常熟悉这一套范式了（虽然这其实来源于 Elm）。不同的是，我们直接拥有不可变的数据，不再需要过度的使用 JavaScript 的 <code>String</code> 来做 <code>actionType</code>，reducer 也写的更加优雅简单了，看着真是舒服~</p>
+
+<h2 id="toc_7">继续？</h2>
+
+<p>这篇文章到这里也就暂时结束了，距离能做出一般的组件功能我们还差了很多东西。目前我也只是在一些个人的小项目中使用 Reason，文章内容很浅，主要是希望能启发下厉害的你去尝试 Reason 这个还算新鲜的语言，相信它会让你眼前一亮的。</p>
+
+<p>对了，既然都看到这里了，不如再去看看今年两次 React Conf 上 <a href="https://github.com/chenglou">chenglou</a> 关于 Reason 的精彩演讲吧~ </p>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=_0T5OSSzxms&amp;t=15s">Taming the Meta Language - React Conf 2017</a></li>
+<li><a href="https://www.youtube.com/watch?v=24S5u_4gx7w&amp;t=3s">What&#39;s in a language? - Cheng Lou</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[21 分钟精通前端 Polyfill 方案]]></title>
+    <link href="http://www.sitixi.com/14994835126345.html"/>
+    <updated>2017-07-08T11:11:52+08:00</updated>
+    <id>http://www.sitixi.com/14994835126345.html</id>
+    <content type="html"><![CDATA[
+<p><img src="media/14994835126345/dataTable.png" alt="dataTable"/></p>
+
+<p>今天是 2017 年 7 月 7 日，es2015 正式发布已经两年了。但最新的浏览器们逼近 100% 的支持率对我们好像并没有什么卵用，为了少数用户的体验，我们很可能需要兼容 IE9。感谢 babel 的编译，让我们完美的提前使用上了 const，let 和 arrow function。可也许你还是面对着不敢直接使用 <code>fetch</code> 或是 <code>Object.assign</code> 的难题？</p>
+
+<h2 id="toc_0">babel 和 polyfill</h2>
+
+<p>刚接触 babel 的同学一开始可能都认为在使用了 babel 后就可以无痛的使用 es2015 了，之后被各种 undefined 的报错无情打脸。一句话概括, babel 的编译不会做 polyfill。那么 polyfill 是指什么呢?</p>
+
+<pre><code class="language-javascript">const foo = (a, b) =&gt; {
+    return Object.assign(a, b);
+};
+</code></pre>
+
+<p>当我们写出上面这样的代码，交给 babel 编译时，我们得到了：</p>
+
+<pre><code>&quot;use strict&quot;;
+
+var foo = function foo(a, b) {
+    return Object.assign(a, b);
+};
+</code></pre>
+
+<p>arrow function 被编译成了普通的函数，但仔细一看 <code>Object.assign</code> 还牢牢的站在那里，而它作为 es2015 的新方法，并不能运行在相当多的浏览器上。为什么不把 <code>Object.assign</code> 编译成 <code>(Object.assign||function() { /*...*/})</code> 这样的替代方法呢？好问题！编译为了保证正确的语义，只能转换语法而不是去增加或修改原有的属性和方法。所以 babel 不处理 <code>Object.assign</code> 反倒是最正确的做法。而处理这些方法的方案则被称为 polyfill。</p>
+
+<h2 id="toc_1">babel-plugin-transform-xxx</h2>
+
+<p>解决这个问题最原始的思路是缺什么补什么，babel 提供了一系列 transform 的插件来解决这个问题，例如针对 <code>Object.assign</code>，我们可以使用 babel-plugin-transform-object-assign：</p>
+
+<pre><code class="language-shell">yarn add babel-plugin-transform-object-assign
+
+# in .babelrc
+{
+  &quot;presets&quot;: [&quot;latest&quot;],
+  &quot;plugins&quot;: [&quot;transform-object-assign&quot;]
+}
+</code></pre>
+
+<p>方便你尝试，这里准备了一些测试的<a href="https://github.com/stonexer/babel-polyfill-test">代码</a>。编译之前的代码，我们得到了：</p>
+
+<pre><code class="language-javascript">var _extends = Object.assign || function (target) { for (var i = 1; i &lt; arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var foo = exports.foo = function foo(a, b) {
+  return _extends(a, b);
+};
+</code></pre>
+
+<p>babel-plugin-transform-object-assign 在 module 之前替换了我们用到的 Object.assign 方法。看上去效果不错，但细细考究一下会发现这样的问题：</p>
+
+<pre><code class="language-javascript">// another.js
+export const bar = (a, b) =&gt; Object.assign(a, b);
+
+// index.js
+import { bar } from &#39;./another&#39;;
+
+export const foo = (a, b) =&gt; Object.assign(a, b);
+</code></pre>
+
+<p>被编译成了：</p>
+
+<pre><code class="language-javascript">/***/ 211:
+/***/ (function(module, exports, __webpack_require__) {
+
+&quot;use strict&quot;;
+
+Object.defineProperty(exports, &quot;__esModule&quot;, {
+  value: true
+});
+exports.foo = undefined;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i &lt; arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _another = __webpack_require__(212);
+
+var foo = exports.foo = function foo(a, b) {
+  return _extends(a, b);
+};
+
+/***/ }),
+
+/***/ 212:
+/***/ (function(module, exports, __webpack_require__) {
+
+&quot;use strict&quot;;
+
+Object.defineProperty(exports, &quot;__esModule&quot;, {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i &lt; arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var bar = exports.bar = function bar(a, b) {
+  return _extends(a, b);
+};
+
+/***/ })
+</code></pre>
+
+<p>transform 的引用是 module 级别的，这意味着在多个 module 使用时会带来重复的引用，这在多文件的项目里可能带来灾难。另外，你可能也并不想一个个的去添加自己要用的 plugin，如果能自动引入该多好。</p>
+
+<h2 id="toc_2">babel-runtime &amp; babel-plugin-transform-runtime</h2>
+
+<p>前面提到问题主要在于方法的引入方式是内联的，直接插入了一行代码从而无法优化。鉴于这样的考虑，babel 提供了 babel-plugin-transform-runtime，从一个统一的地方 <a href="https://github.com/zloirock/core-js">core-js</a> <strong>自动</strong>引入对应的方法。</p>
+
+<p>安装和使用的方法同样不复杂：</p>
+
+<pre><code class="language-shell">yarn add -D babel-plugin-transform-runtime
+yarn add babel-runtime
+
+# .babelrc
+{
+  &quot;presets&quot;: [&quot;latest&quot;],
+  &quot;plugins&quot;: [&quot;transform-runtime&quot;]
+}
+</code></pre>
+
+<p>首先需要安装开发时的依赖 <code>babel-plugin-transform-runtime</code>。同时还需要安装生产环境的依赖 <code>babel-runtime</code>。是否要在生产环境也依赖它取决于你发布代码的方式，简单点直接放在 dependency 里总没错。一切就绪，编译时它会自动引入你用到的方法。但自动就意味着不一定精确：</p>
+
+<pre><code class="language-javascript">export const foo = (a, b) =&gt; Object.assign(a, b);
+
+export const bar = (a, b) =&gt; {
+    const o = Object;
+    const c = [1, 2, 3].includes(3);
+    return c &amp;&amp; o.assign(a, b);
+};
+</code></pre>
+
+<p>会编译成：</p>
+
+<pre><code class="language-javascript">var _assign = __webpack_require__(214);
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj &amp;&amp; obj.__esModule ? obj : { default: obj }; }
+
+var foo = exports.foo = function foo(a, b) {
+    return (0, _assign2.default)(a, b);
+};
+
+var bar = exports.bar = function bar(a, b) {
+    var o = Object;
+    var c = [1, 2, 3].includes(3);
+    return c &amp;&amp; o.assign(a, b);
+};
+</code></pre>
+
+<p>foo 中的 assign 会被替换成 require 来的方法，而 bar 中这样非直接调用的方式则无能为力了。同时，因为 babel-plugin-transform-runtime 依然不是全局生效的，因此实例化的对象方法则不能被 polyfill，比如 <code>[1,2,3].includes</code> 这样依赖于全局 <code>Array.prototype.includes</code> 的调用依然无法使用。</p>
+
+<h2 id="toc_3">babel-polyfill</h2>
+
+<p>上面两种 polyfill 方案共有的缺陷在于作用域。因此 babel 直接提供了通过改变全局来兼容 es2015 所有方法的 <a href="https://babeljs.io/docs/usage/polyfill/">babel-polyfill</a>，安装 <code>babel-polyfill</code> 后你只需要在所有代码的最前面加一句 <code>import &#39;babel-polyfill&#39;</code> 便可引入它，如果使用了 webpack 也可以直接在 entry 中添加 babel-polyfill 的入口。</p>
+
+<pre><code class="language-javascript">import &#39;babel-polyfill&#39;;
+
+export const foo = (a, b) =&gt; Object.assign(a, b);
+</code></pre>
+
+<p>加入 babel-polyfill 后，打包好的 pollyfill.js 一下子增加到了 251kb（未压缩），（建议感兴趣的同学把代码拉下来运行一下，之后提到的所有方式也都可以看到打包结果）搜索一下 polyfill.js 不难找到这样的全局修改：</p>
+
+<pre><code>//polyfill
+`$export($export.S + $export.F, &#39;Object&#39;, {assign: __webpack_require__(79)});
+</code></pre>
+
+<p>babel-polyfill 在项目代码前插入所有的 polyfill 代码，为你的程序打造一个完美的 es2015 运行环境。babel 建议在网页应用程序里使用 babel-polyfill，只要不在意它略有点大的体积（min 后 86kb），直接用它肯定是最稳妥的。值得注意的是，因为 babel-polyfill 带来的改变是全局的，所以无需多次引用，也有可能因此产生冲突，所以最好还是把它抽成一个 common module，放在项目 的 vendor 里，或者干脆直接抽成一个文件放在 cdn 上。</p>
+
+<p>如果你是在开发一个库或者框架，那么 babel-polyfill 的体积就有点大了，尤其是在你实际使用的只有一个 <code>Object.assign</code> 的情况下。更可怕的是对于一个库来说，改变全局环境是使不得的。谁也不希望使用了你的库，还附带了一家老小的 polyfill 改变了全局对象。这时不污染全局环境的 babel-plugin-transform-runtime 才是最合适的。</p>
+
+<h2 id="toc_4">babel-preset-env</h2>
+
+<p>回到应用开发。通过自动识别代码引入 polyfill 来优化看来是不太靠谱的，那是不是就无从优化了呢？并不是。还记得 babel 推荐使用的 babel-preset-env 么？它可以根据指定目标环境判断需要做哪些编译。而在张克炎大神的<a href="https://github.com/babel/babel-preset-env/issues/20">建议</a>下，babel-preset-env 也支持针对指定目标环境选择需要的 polyfill 了，只需引入 babel-polyfill，并在 babelrc 中声明 useBuiltIns，babel 会将引入的 babel-polyfill 自动替换为所需的 polyfill。</p>
+
+<pre><code class="language-json"># .babelrc
+{
+  &quot;presets&quot;: [
+    [&quot;env&quot;, {
+      &quot;targets&quot;: {
+        &quot;browsers&quot;: [&quot;IE &gt;= 9&quot;]
+      },
+      &quot;useBuiltIns&quot;: true
+    }]
+  ]
+}
+</code></pre>
+
+<p>对比 &quot;IE &gt;= 9&quot; 和 &quot;chrome &gt;= 59&quot; 环境下编译后的文件大小:</p>
+
+<pre><code>               Asset     Size  Chunks           
+         polyfill.js   252 kB       0  [emitted]  [big]
+              ie9.js   189 kB       1  [emitted]
+           chrome.js  30.5 kB       2  [emitted]
+transform-runtime.js  17.3 kB       3  [emitted]
+transform-plugins.js  3.48 kB       4  [emitted]
+</code></pre>
+
+<p>在目前 IE9 的需求下能节省到将近 30%，但想不到浏览器之神 chrome 也还需要 30kb 的 polyfill，可能是为了修正那些 v8 的一些细小的规范问题吧。（当我尝试调大浏览器范围时，发现始终停留在 189kb 以内，还没细究相比完整的 polyfill 少掉了什么，如果有高手知道的欢迎解答）</p>
+
+<h2 id="toc_5">polyfill.io</h2>
+
+<p>以上这样对你来说应该已经够用了，但本质上还是让那些愿意使用最新浏览器的优质用户们做了牺牲。聪明的你可能已经想到了一种优化方案，针对浏览器来选择 polyfill。没错！<a href="https://polyfill.io/v2/docs/">polyfill.io</a> 便是基于这个思路给出的一项服务。</p>
+
+<p>你可以尝试在不同的浏览器下请求 <code>https://cdn.polyfill.io/v2/polyfill.js</code> 这个文件，服务器会判断浏览器 UA 返回不同的 polyfill 文件，你所要做的仅仅是在页面上引入这个文件，polyfill 这件事就自动以最优雅的方式解决了。更加让人喜悦的是，polyfill.io 不旦提供了 cdn 的服务，也开源了自己的实现方案 <a href="https://github.com/Financial-Times/polyfill-service">polyfill-service</a>。简单配置一下，便可拥有自己的 polyfill service 了。</p>
+
+<p>看上去一切都很美好，但在使用之前还请你多考虑一下。polyfill.io 面对国内奇葩的浏览器环境能不能把 UA 算准，如果缺失了 polyfill 还有没有什么补救方案，也许都是你需要考虑的。但无论如何，这是个优秀的想法和方案，我想未来也会有更多的网站采用 polyfill.io 的思路的。比如 <a href="https://www.theguardian.com/international">theguardian</a> 和 <a href="https://github.com/facebookincubator/create-react-app/issues/1104">redux 作者 Dan 在 create-react-app 上的提议</a>（虽然没被接受哈~）。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Vuex 源码阅读]]></title>
+    <link href="http://www.sitixi.com/14827149741341.html"/>
+    <updated>2016-12-26T09:16:14+08:00</updated>
+    <id>http://www.sitixi.com/14827149741341.html</id>
+    <content type="html"><![CDATA[
+<p>Vuex 作为 Vue 官方的状态管理架构，借鉴了 Flux 的设计思想，在大型应用中可以理清应用状态管理的逻辑。为了更清楚的理解它的原理和实现，还是从源码开始读起吧。总共 1000 多行的代码，读起来也相对轻松。</p>
+
+<pre><code class="language-shell">cloc src/
+
+------------------------------------------------------------------
+Language   files          blank        comment         code
+------------------------------------------------------------------
+JavaScript   5             53            141            389
+------------------------------------------------------------------
+SUM:         5             53            141            389
+------------------------------------------------------------------
+
+cloc test/
+
+------------------------------------------------------------------
+Language   files          blank        comment         code
+------------------------------------------------------------------
+JavaScript   5             62             30            793
+------------------------------------------------------------------
+SUM:         5             62             30            793
+------------------------------------------------------------------
+</code></pre>
+
+<h2 id="toc_0">结构梳理</h2>
+
+<p>先抛开 middlewares，Vuex 的主要源码一共有三个文件:</p>
+
+<table>
+<thead>
+<tr>
+<th>file</th>
+<th>intro</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index.js</td>
+<td>Class Store， install，...</td>
+</tr>
+<tr>
+<td>override.js</td>
+<td>初始化 Vuex</td>
+</tr>
+<tr>
+<td>util.js</td>
+<td>相关 util（用到了 getWatcher 和 getDeep）</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="toc_1">Store</h2>
+
+<p>我们使用 <code>Store</code> 创建 Vuex 的实例并传递给 Vue 的根组件。主要包含了 <code>state</code> 和 <code>mutation</code>。<code>Store</code> 创建了一个 <code>data</code> 为 <code>state</code> 的 Vue 实例，使用了 ES6 Class 的 <code>get</code> 和 <code>set</code> 对 state 做了映射，对 state 的重新 set 当然是不允许的，get 则映射到了 <code>this._vm._data</code>。</p>
+
+<p><code>Store</code> 提供了 <code>dispatch</code> 方法来完成对 state 的修改，和想象中的差不多，在 _mutations 里找到对应 <code>type</code> 的 mutation，参数并入 <code>this.state</code> 传参调用。</p>
+
+<h2 id="toc_2">override</h2>
+
+<p>作为一个 Vue 的插件，Vuex 需要被这样引入:</p>
+
+<pre><code class="language-js">import Vue from &#39;vue&#39;
+import Vuex from &#39;vuex&#39;
+
+Vue.use(Vuex)
+</code></pre>
+
+<p>Vue 的插件应当有一个公开方法 <code>install</code>。这个方法的第一个参数是 Vue 构造器。 Vuex 的 <code>install</code> 中，在保证单次调用的情况下，调用 <code>override</code> 对 Vue 构造器进入了注入。</p>
+
+<p><code>override</code> 中对 <code>Vue.prototype._init</code> 注入了 <code>vuexInit</code>，<code>vuexInit</code> 会在每个 instance 的 init hook 中调用。</p>
+
+<p>第一步是绑定 <code>store</code>, Vuex 会寻找 options 中的 <code>store</code> 作为实例的 <code>$store</code>，在不存在时则以递归的方式寻找父组件中的 <code>$store</code>，因此在 Vuex 的项目中，<code>store</code> 只需要在根组件中注入即可。</p>
+
+<p>第二步是处理 <code>vuex</code>, 分别处理其中的 <code>getters</code> 和 <code>actions</code>, 以 <code>example/counter/Counter.vue</code> 为例：</p>
+
+<h3 id="toc_3">getters</h3>
+
+<p>Vuex 用 <code>Object.defineProperty</code> 为每个 getter 在 vm 上绑定了 data，特别的是 getter 作为单向仅 get 数据流，并不能被 set，所以对应的 <code>setter</code> 为报错用的空函数。而 <code>getter</code> 的原理类似于 <code>computed getter</code>，特别的是使用了 <code>store</code> 的 uniqueId 为标识做了缓存，这样同一个 getter 在所有组件中都会使用相同的 watcher。</p>
+
+<h3 id="toc_4">setter</h3>
+
+<p>Action 相对要简单一些，以 <code>$store</code> 作为 action 第一个参数，并将 action 绑定在 instance 上。形成了一个闭环，让 action 访问到 store。</p>
+
+<h2 id="toc_5">总结</h2>
+
+<p>Vuex 源码上粗略的分析基本就到这里了，其实很多地方的代码都很值得细细研究，比如 Store 中的 middlewares 可以完成一些神奇的事情，这里就不一一分析了，画了一张图，按源码的思路大概表达下数据流的意思。O(∩_∩)O</p>
+
+<pre><code>      +-----------+
+      |           |
+      |   Store   +&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;+
+      |           |                                   v
+      |-----------|                                   v
+      |   state   &lt;&lt;&lt;&lt;&lt;&lt;+                             v
+      |-----------|     ^                             v
++&gt;&gt;&gt;&gt;&gt;- distapatch -&gt;&gt;&gt;&gt;+                             v
+^     +-----------+                                   v
+^                                                     v
+^                          +--------------------+     v
+^                          |                    |     v
+^                          |     Component      |     v
+^                          |                    |     v
+^                          |--------------------|     v
+^                    +&lt;&lt;&lt;&lt;&lt;-----  $store  &lt;------&lt;&lt;&lt;&lt;&lt;+
+^                    v     |--------------------|
+^                    v     |  vuex: {           |
+^                    v     |                    |
+^                    +&gt;&gt;&gt;&gt;&gt;----- getters: {},   |
+^                          |                    |
++&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;----- actions: {}    |
+                           |                    |
+                           |  }                 |
+                           +--------------------+
+</code></pre>
+
+]]></content>
+  </entry>
+  
+</feed>
